@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BassCoach.Core\BassCoach.Core.csproj" />
+    <ProjectReference Include="..\..\src\BassCoach.Presentation\BassCoach.Presentation.csproj" />
+  </ItemGroup>
+</Project>

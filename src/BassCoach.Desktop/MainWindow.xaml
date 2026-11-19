@@ -1,0 +1,39 @@
+<Window x:Class="BassCoach.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:BassCoach.Presentation;assembly=BassCoach.Presentation"
+        xmlns:views="clr-namespace:BassCoach.Desktop.Views"
+        Title="Bass Coach" Width="1180" Height="780" MinWidth="980" MinHeight="680"
+        Background="{StaticResource BgBrush}" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:LessonsViewModel}"><views:LessonsView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PracticeViewModel}"><views:PracticeView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ProgressViewModel}"><views:ProgressView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView /></DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="210" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Border Background="{StaticResource SidebarBrush}">
+            <StackPanel Margin="16,26,16,16">
+                <TextBlock Text="Bass Coach" FontSize="22" FontWeight="SemiBold" Foreground="White" Margin="14,0,0,2" />
+                <TextBlock Text="Your practice partner" Foreground="#9CA3AF" Margin="14,0,0,26" />
+                <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Lessons"
+                             IsChecked="{Binding IsLessons, Mode=OneWay}"
+                             Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Lessons}" />
+                <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Practice"
+                             IsChecked="{Binding IsPractice, Mode=OneWay}"
+                             Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Practice}" />
+                <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Progress"
+                             IsChecked="{Binding IsProgress, Mode=OneWay}"
+                             Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Progress}" />
+                <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Settings"
+                             IsChecked="{Binding IsSettings, Mode=OneWay}"
+                             Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Settings}" />
+            </StackPanel>
+        </Border>
+        <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" Focusable="False" />
+    </Grid>
+</Window>

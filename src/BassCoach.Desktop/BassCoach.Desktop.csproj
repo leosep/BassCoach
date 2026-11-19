@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>BassCoach</AssemblyName>
+    <RootNamespace>BassCoach.Desktop</RootNamespace>
+    <ApplicationIcon>Assets\bass.ico</ApplicationIcon>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Description>Practice bass with a backing band and instant feedback.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <ProjectReference Include="..\BassCoach.Core\BassCoach.Core.csproj" />
+    <ProjectReference Include="..\BassCoach.Presentation\BassCoach.Presentation.csproj" />
+    <Resource Include="Assets\bass.ico" />
+  </ItemGroup>
+</Project>

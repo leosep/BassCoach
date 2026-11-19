@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bass Coach MSI installer (WiX v4+ / v7).
+
+  Build:
+    wix build installer\BassCoach.wxs -d AppVersion=1.0.0 -d PublishDir=<absolute path to publish>
+              -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext
+              -o dist\Install-BassCoach-1.0.0-x64.msi
+
+  Windows detection notes (the parts that are easy to get wrong):
+  * Do NOT test VersionNT >= 1000 to mean "Windows 10 or 11". Windows Installer's own
+    msiexec.exe manifest only declares Windows 8.1, so inside every MSI (UI and execute
+    sequence) VersionNT is capped at 603 and WindowsBuild at 9600 on Windows 10/11.
+    Microsoft documents this: "the VersionNT value is 603 for Windows 10" (KB3202260).
+  * The reliable in-MSI test is the CurrentMajorVersionNumber DWORD under
+    HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion. It does not exist before
+    Windows 10 and is 10 on both Windows 10 and Windows 11 (Windows 11 is build 22000+,
+    but its major version is still 10).
+  * Msix64 is set by Windows Installer only on x64 Windows. VersionNT64 is also set
+    on ARM64, so it is NOT a safe "this is an x64 machine" test. This package ships a
+    win-x64 build, so we require Msix64 and give ARM64 users a clear message instead
+    of a broken install.
+  * Installed is included in the launch conditions so repair and uninstall still work
+    if the OS is upgraded/downgraded after installation.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <?ifndef AppVersion ?>
+    <?define AppVersion = "1.0.0" ?>
+  <?endif?>
+
+  <?ifndef PublishDir ?>
+    <?define PublishDir = "..\publish" ?>
+  <?endif?>
+
+  <Package Name="Bass Coach"
+           Manufacturer="Bass Coach"
+           Version="$(var.AppVersion)"
+           Language="1033"
+           UpgradeCode="B7C1E2A4-5D93-4F0A-9E61-2A8F4C7D1B30"
+           Scope="perUserOrMachine"
+           Compressed="yes">
+
+    <SummaryInformation Description="Bass Coach - practice bass with a backing band and instant feedback."
+                        Manufacturer="Bass Coach" />
+
+    <!--
+      Dual-purpose package: per-user by default (no administrator rights, same behaviour as
+      the old Inno Setup build), but a per-machine install is still possible with ALLUSERS=1.
+      ProgramFiles6432Folder redirects to %LocalAppData%\Programs for the per-user case.
+    -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Bass Coach is already installed."
+                  MigrateFeatures="yes" />
+
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <!--
+      Windows 10 or 11. VersionNT is capped at 603 inside an MSI, so read the real build
+      number from the registry instead. CurrentBuildNumber is 9600 on Windows 8.1 and
+      10240+ on Windows 10 (19041+ on recent releases, 22000+ on Windows 11), so a numeric
+      ">= 10240" test is exactly "Windows 10 or later" and stays correct for future builds.
+      AppSearch runs before LaunchConditions in both the UI and execute sequences, so the
+      property is populated in silent installs too.
+    -->
+    <Property Id="WINDOWSBUILDNUMBER">
+      <RegistrySearch Id="WindowsBuildNumberSearch"
+                      Root="HKLM"
+                      Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion"
+                      Name="CurrentBuildNumber"
+                      Type="raw" />
+    </Property>
+
+    <Launch Condition="Installed OR WINDOWSBUILDNUMBER &gt;= 10240"
+            Message="Bass Coach requires Windows 10 or Windows 11." />
+
+    <!-- x64 only: Msix64 is not set on ARM64 even though VersionNT64 is. -->
+    <Launch Condition="Installed OR Msix64"
+            Message="Bass Coach requires 64-bit Windows (x64). ARM64 Windows is not supported by this build." />
+
+    <Icon Id="BassCoach.exe" SourceFile="$(var.PublishDir)\BassCoach.exe" />
+    <Property Id="ARPPRODUCTICON" Value="BassCoach.exe" />
+
+    <!--
+      Advertised shortcuts are used so ICE57 can see that the shortcut scope matches the
+      file keypath. Windows Installer turns them back into normal .lnk files at install
+      time, so the user gets ordinary shortcuts.
+    -->
+    <Property Id="DISABLEADVTSHORTCUTS" Value="1" />
+
+    <!-- Launch the app from the finish page. The checkbox is checked by default. -->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open Bass Coach now" />
+
+    <ui:WixUI Id="WixUI_Minimal" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(sys.SOURCEFILEDIR)License.rtf" />
+
+    <CustomAction Id="LaunchApplication"
+                  Directory="INSTALLFOLDER"
+                  ExeCommand="&quot;[INSTALLFOLDER]BassCoach.exe&quot;"
+                  Return="asyncNoWait"
+                  Impersonate="yes" />
+
+    <InstallExecuteSequence>
+      <Custom Action="LaunchApplication" After="InstallFinalize"
+              Condition="NOT Installed AND UILevel &gt;= 3 AND WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1" />
+    </InstallExecuteSequence>
+
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="INSTALLFOLDER" Name="Bass Coach">
+        <Component Id="MainExecutable" Guid="5D2F2A0B-9A52-4D7B-8C1E-3A6C7F0E2B11">
+          <File Id="BassCoachExe" Source="$(var.PublishDir)\BassCoach.exe" KeyPath="yes">
+            <Shortcut Id="StartMenuShortcut"
+                      Directory="ProgramMenuFolder"
+                      Name="Bass Coach"
+                      Description="Practice bass with a backing band and instant feedback"
+                      WorkingDirectory="INSTALLFOLDER"
+                      Icon="BassCoach.exe"
+                      Advertise="yes" />
+            <Shortcut Id="DesktopShortcut"
+                      Directory="DesktopFolder"
+                      Name="Bass Coach"
+                      Description="Practice bass with a backing band and instant feedback"
+                      WorkingDirectory="INSTALLFOLDER"
+                      Icon="BassCoach.exe"
+                      Advertise="yes" />
+          </File>
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Files Include="$(var.PublishDir)\**">
+        <Exclude Files="$(var.PublishDir)\BassCoach.exe" />
+      </Files>
+    </ComponentGroup>
+
+    <Feature Id="MainFeature"
+             Title="Bass Coach"
+             Description="The Bass Coach application and all required runtime files."
+             Level="1"
+             AllowAbsent="no">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentGroupRef Id="AppFiles" />
+    </Feature>
+  </Package>
+</Wix>
