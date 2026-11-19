@@ -48,6 +48,7 @@ WiX is required as a .NET global tool:
 
 ```
 dotnet tool install --global wix --version 7.0.1
+wix eula accept wix7
 wix extension add --global WixToolset.UI.wixext/7.0.1
 wix extension add --global WixToolset.Util.wixext/7.0.1
 ```

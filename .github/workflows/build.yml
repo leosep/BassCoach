@@ -22,6 +22,7 @@ jobs:
         shell: pwsh
         run: |
           dotnet tool install --global wix --version 7.0.1
+          wix eula accept wix7
           wix extension add --global WixToolset.UI.wixext/7.0.1
           wix extension add --global WixToolset.Util.wixext/7.0.1
       - name: Self-tests (theory, pitch detection, band, evaluation, view models)
