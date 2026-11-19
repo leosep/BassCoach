@@ -16,10 +16,11 @@
     HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion. It does not exist before
     Windows 10 and is 10 on both Windows 10 and Windows 11 (Windows 11 is build 22000+,
     but its major version is still 10).
-  * Msix64 is set by Windows Installer only on x64 Windows. VersionNT64 is also set
-    on ARM64, so it is NOT a safe "this is an x64 machine" test. This package ships a
-    win-x64 build, so we require Msix64 and give ARM64 users a clear message instead
-    of a broken install.
+  * Architecture is enforced by the package itself. This MSI is built with -arch x64, so
+    its Template Summary is "x64;1033" and Windows Installer refuses to run it on a
+    platform that cannot execute x64 code (for example Windows 10 on ARM64). Do not test
+    Msix64 for this: Windows 11 on ARM64 sets Msix64 because it emulates x64, and the
+    win-x64 build does run there.
   * Installed is included in the launch conditions so repair and uninstall still work
     if the OS is upgraded/downgraded after installation.
 -->
@@ -74,9 +75,11 @@
     <Launch Condition="Installed OR WINDOWSBUILDNUMBER &gt;= 10240"
             Message="Bass Coach requires Windows 10 or Windows 11." />
 
-    <!-- x64 only: Msix64 is not set on ARM64 even though VersionNT64 is. -->
-    <Launch Condition="Installed OR Msix64"
-            Message="Bass Coach requires 64-bit Windows (x64). ARM64 Windows is not supported by this build." />
+    <!--
+      No architecture launch condition is needed: the package Template is x64, which
+      Windows Installer enforces before any action runs. See the header comment for why
+      Msix64 must not be used to detect ARM64.
+    -->
 
     <Icon Id="BassCoach.exe" SourceFile="$(var.PublishDir)\BassCoach.exe" />
     <Property Id="ARPPRODUCTICON" Value="BassCoach.exe" />

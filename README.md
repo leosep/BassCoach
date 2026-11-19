@@ -52,7 +52,7 @@ wix extension add --global WixToolset.UI.wixext/7.0.1
 wix extension add --global WixToolset.Util.wixext/7.0.1
 ```
 
-The installer requires Windows 10/11 on x64. Note that Windows Installer reports `VersionNT = 603` and `WindowsBuild = 9600` on every Windows 10/11 machine (Microsoft KB3202260), so the MSI checks `CurrentBuildNumber` from the registry instead of `VersionNT >= 1000`. ARM64 gets a clear "x64 required" message.
+The installer requires Windows 10/11. Note that Windows Installer reports `VersionNT = 603` and `WindowsBuild = 9600` on every Windows 10/11 machine (Microsoft KB3202260), so the MSI checks `CurrentBuildNumber` from the registry instead of `VersionNT >= 1000`. The MSI is marked x64, so Windows Installer refuses it on platforms that cannot run x64 code (such as Windows 10 on ARM64); Windows 11 on ARM64 runs it through x64 emulation.
 
 Design notes: the only code that touches hardware is `src/BassCoach.Desktop/Audio`. Everything else talks to `IAudioService`, so the whole practice flow is tested with a fake audio device that plays a simulated bassist.
 
