@@ -4,6 +4,16 @@ A practice partner for bass players. It plays a backing band (drums and chords) 
 
 It is a practice tool, not a replacement for a human teacher: it can judge notes and timing, but it cannot judge your technique, tone or feel.
 
+## Screenshots
+
+| Lessons | Free practice |
+|---|---|
+| ![Lessons](docs/screenshots/lessons.png) | ![Free practice setup](docs/screenshots/practice.png) |
+
+| Progress | Settings |
+|---|---|
+| ![Progress](docs/screenshots/progress.png) | ![Settings](docs/screenshots/settings.png) |
+
 ## For players
 
 **Requirements:** Windows 10/11 (64-bit). A bass plugged into an audio interface (input 1) works best; a microphone in front of an amp also works, with less accuracy. Use headphones so the backing band does not leak into the input.

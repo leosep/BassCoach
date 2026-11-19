@@ -4,36 +4,80 @@
         xmlns:vm="clr-namespace:BassCoach.Presentation;assembly=BassCoach.Presentation"
         xmlns:views="clr-namespace:BassCoach.Desktop.Views"
         Title="Bass Coach" Width="1180" Height="780" MinWidth="980" MinHeight="680"
-        Background="{StaticResource BgBrush}" WindowStartupLocation="CenterScreen">
+        Background="{StaticResource BgBrush}" WindowStartupLocation="CenterScreen"
+        WindowStyle="None" ResizeMode="CanResize" UseLayoutRounding="True">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="44" ResizeBorderThickness="6" GlassFrameThickness="0"
+                      CornerRadius="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:LessonsViewModel}"><views:LessonsView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:PracticeViewModel}"><views:PracticeView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:ProgressViewModel}"><views:ProgressView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView /></DataTemplate>
     </Window.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="210" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Border Background="{StaticResource SidebarBrush}">
-            <StackPanel Margin="16,26,16,16">
-                <TextBlock Text="Bass Coach" FontSize="22" FontWeight="SemiBold" Foreground="White" Margin="14,0,0,2" />
-                <TextBlock Text="Your practice partner" Foreground="#9CA3AF" Margin="14,0,0,26" />
-                <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Lessons"
-                             IsChecked="{Binding IsLessons, Mode=OneWay}"
-                             Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Lessons}" />
-                <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Practice"
-                             IsChecked="{Binding IsPractice, Mode=OneWay}"
-                             Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Practice}" />
-                <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Progress"
-                             IsChecked="{Binding IsProgress, Mode=OneWay}"
-                             Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Progress}" />
-                <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Settings"
-                             IsChecked="{Binding IsSettings, Mode=OneWay}"
-                             Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Settings}" />
-            </StackPanel>
-        </Border>
-        <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" Focusable="False" />
-    </Grid>
+    <Border x:Name="RootBorder" Background="{StaticResource BgBrush}"
+            BorderBrush="{StaticResource LineBrush}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Title bar -->
+            <Border Grid.Row="0" Background="{StaticResource TitleBarBrush}" BorderBrush="{StaticResource LineBrush}"
+                    BorderThickness="0,0,0,1">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="18,0,0,0">
+                        <Ellipse Width="9" Height="9" Fill="{StaticResource AccentBrush}" Margin="0,0,10,0" />
+                        <TextBlock Text="Bass Coach" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+                        <Button Style="{StaticResource CaptionButton}" Click="Minimize_Click" ToolTip="Minimize"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Path Data="M 0,5 L 10,5" Stroke="{StaticResource InkBrush}" StrokeThickness="1.2"
+                                  SnapsToDevicePixels="True" />
+                        </Button>
+                        <Button Style="{StaticResource CaptionButton}" Click="MaximizeRestore_Click" ToolTip="Maximize"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Path x:Name="MaximizeGlyph" Data="M 0.5,0.5 L 9.5,0.5 L 9.5,9.5 L 0.5,9.5 Z"
+                                  Stroke="{StaticResource InkBrush}" StrokeThickness="1.2" SnapsToDevicePixels="True" />
+                        </Button>
+                        <Button Style="{StaticResource CloseCaptionButton}" Click="Close_Click" ToolTip="Close"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Path Data="M 0.5,0.5 L 9.5,9.5 M 9.5,0.5 L 0.5,9.5" Stroke="{StaticResource InkBrush}"
+                                  StrokeThickness="1.2" SnapsToDevicePixels="True" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Body -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="210" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Background="{StaticResource SidebarBrush}">
+                    <StackPanel Margin="16,22,16,16">
+                        <TextBlock Text="Bass Coach" FontSize="22" FontWeight="SemiBold" Foreground="White" Margin="14,0,0,2" />
+                        <TextBlock Text="Your practice partner" Foreground="{StaticResource MutedBrush}" Margin="14,0,0,26" />
+                        <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Lessons"
+                                     IsChecked="{Binding IsLessons, Mode=OneWay}"
+                                     Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Lessons}" />
+                        <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Practice"
+                                     IsChecked="{Binding IsPractice, Mode=OneWay}"
+                                     Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Practice}" />
+                        <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Progress"
+                                     IsChecked="{Binding IsProgress, Mode=OneWay}"
+                                     Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Progress}" />
+                        <RadioButton GroupName="nav" Style="{StaticResource NavButton}" Content="Settings"
+                                     IsChecked="{Binding IsSettings, Mode=OneWay}"
+                                     Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:Page.Settings}" />
+                    </StackPanel>
+                </Border>
+                <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" Focusable="False" />
+            </Grid>
+        </Grid>
+    </Border>
 </Window>

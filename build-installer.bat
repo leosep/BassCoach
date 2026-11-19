@@ -9,6 +9,7 @@ if errorlevel 1 (
   echo WiX Toolset not found on PATH.
   echo Install it with:
   echo   dotnet tool install --global wix --version 7.0.1
+  echo   wix eula accept wix7
   echo   wix extension add --global WixToolset.UI.wixext/7.0.1
   echo   wix extension add --global WixToolset.Util.wixext/7.0.1
   goto done

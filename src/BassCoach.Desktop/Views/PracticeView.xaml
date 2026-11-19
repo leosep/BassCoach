@@ -14,16 +14,35 @@
                 <TextBlock Style="{StaticResource Muted}" Text="{Binding LessonGoal}" TextWrapping="Wrap" Margin="0,4,0,18" />
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource FieldLabel}" Text="Style" Margin="0,0,0,4" />
-                        <ComboBox ItemsSource="{Binding Styles}" SelectedItem="{Binding SelectedStyle}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="130" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Style" Margin="0,0,0,4" />
+                                <ComboBox ItemsSource="{Binding Styles}" SelectedItem="{Binding SelectedStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Key" Margin="0,0,0,4" />
+                                <ComboBox ItemsSource="{Binding Keys}" SelectedItem="{Binding SelectedKey}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate><TextBlock Text="{Binding Name}" /></DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
                         <TextBlock Style="{StaticResource FieldLabel}" Text="Chord progression" />
                         <ComboBox ItemsSource="{Binding Progressions}" SelectedItem="{Binding SelectedProgression}" />
                         <CheckBox Content="Minor key (generated progressions)" IsChecked="{Binding GeneratedMinor}" Margin="0,10,0,0"
                                   Visibility="{Binding ShowMinorOption, Converter={StaticResource BoolToVis}}" />
-                        <TextBlock Style="{StaticResource FieldLabel}" Text="Key" />
-                        <ComboBox ItemsSource="{Binding Keys}" SelectedItem="{Binding SelectedKey}" DisplayMemberPath="Name" Width="120" HorizontalAlignment="Left" />
                         <TextBlock Style="{StaticResource FieldLabel}" Text="Exercise" />
-                        <ComboBox ItemsSource="{Binding Exercises}" SelectedItem="{Binding SelectedExercise}" DisplayMemberPath="Title" />
+                        <ComboBox ItemsSource="{Binding Exercises}" SelectedItem="{Binding SelectedExercise}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate><TextBlock Text="{Binding Title}" /></DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                         <TextBlock Style="{StaticResource Muted}" Text="{Binding ExerciseHint}" TextWrapping="Wrap" Margin="0,6,0,0" />
                         <TextBlock Style="{StaticResource FieldLabel}" Text="{Binding Bpm, StringFormat=Tempo: {0} BPM}" />
                         <Slider Minimum="40" Maximum="200" Value="{Binding Bpm}" TickFrequency="1" IsSnapToTickEnabled="True" />
@@ -84,26 +103,38 @@
                 <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="0,0,8,8" Padding="14,8" MinWidth="64" CornerRadius="8" BorderThickness="1" BorderBrush="{StaticResource LineBrush}">
+                        <Border Margin="0,0,8,8" Padding="14,8" MinWidth="64" CornerRadius="8" BorderThickness="1">
                             <Border.Style>
                                 <Style TargetType="Border">
-                                    <Setter Property="Background" Value="White" />
+                                    <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+                                    <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsCurrent}" Value="True">
                                             <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+                                            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBlock Text="{Binding Symbol}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding Symbol}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                                <Setter Property="Foreground" Value="{StaticResource AccentInkBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Border Grid.Row="3" Style="{StaticResource Card}" Margin="0,8,0,12" Background="#1F2937" VerticalAlignment="Top" MinHeight="170">
+            <Border Grid.Row="3" Style="{StaticResource Card}" Margin="0,8,0,12" Background="{StaticResource SurfaceBrush}" VerticalAlignment="Top" MinHeight="170">
                 <StackPanel>
-                    <TextBlock Text="Chord tones (R = root, 3, 5, 7)" Foreground="#9CA3AF" Margin="0,0,0,8" />
+                    <TextBlock Text="Chord tones (R = root, 3, 5, 7)" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,8" />
                     <controls:FretboardControl Height="150" Markers="{Binding FretMarkers}" StringCount="{Binding StringCount}" />
                 </StackPanel>
             </Border>

@@ -8,9 +8,17 @@
                 <StackPanel>
                     <TextBlock Style="{StaticResource H2}" Text="Audio" />
                     <TextBlock Style="{StaticResource FieldLabel}" Text="Input (plug your bass into input 1)" />
-                    <ComboBox ItemsSource="{Binding InputDevices}" SelectedItem="{Binding SelectedInput}" DisplayMemberPath="Name" />
+                    <ComboBox ItemsSource="{Binding InputDevices}" SelectedItem="{Binding SelectedInput}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate><TextBlock Text="{Binding Name}" /></DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     <TextBlock Style="{StaticResource FieldLabel}" Text="Output (headphones or speakers)" />
-                    <ComboBox ItemsSource="{Binding OutputDevices}" SelectedItem="{Binding SelectedOutput}" DisplayMemberPath="Name" />
+                    <ComboBox ItemsSource="{Binding OutputDevices}" SelectedItem="{Binding SelectedOutput}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate><TextBlock Text="{Binding Name}" /></DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     <TextBlock Style="{StaticResource FieldLabel}" Text="Number of strings" />
                     <ComboBox ItemsSource="{Binding StringOptions}" SelectedItem="{Binding StringCount}" Width="120" HorizontalAlignment="Left" />
                     <TextBlock Style="{StaticResource FieldLabel}" Text="{Binding Sensitivity, StringFormat=Input sensitivity: {0:P0}}" />

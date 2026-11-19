@@ -32,7 +32,11 @@ jobs:
       - name: Build and validate the MSI
         shell: pwsh
         run: |
-          $version = if ("${{ github.ref_type }}" -eq "tag") { "${{ github.ref_name }}".TrimStart("v") } else { "1.0.0" }
+          if ("${{ github.ref_type }}" -eq "tag") {
+            $version = "${{ github.ref_name }}".TrimStart("v")
+          } else {
+            $version = @(([xml](Get-Content Directory.Build.props)).Project.PropertyGroup.Version)[0]
+          }
           $msi = "dist/Install-BassCoach-$version-x64.msi"
           wix build installer/BassCoach.wxs -arch x64 -d AppVersion=$version -d PublishDir="$PWD/publish" -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -o $msi
           wix msi validate $msi
@@ -45,4 +49,6 @@ jobs:
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*
+          files: |
+            dist/*.msi
+            dist/SHA256SUMS.txt
