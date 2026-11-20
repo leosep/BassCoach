@@ -3,9 +3,14 @@
   Bass Coach MSI installer (WiX v4+ / v7).
 
   Build:
-    wix build installer\BassCoach.wxs -d AppVersion=1.0.0 -d PublishDir=<absolute path to publish>
+    wix build installer\BassCoach.wxs -d AppVersion=1.0.2 -d PublishDir=<absolute path to publish>
               -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext
-              -o dist\Install-BassCoach-1.0.0-x64.msi
+              -o dist\Install-BassCoach-1.0.2-x64.msi
+
+  Installer behaviour:
+  * Per-user by default (no administrator rights), per-machine with ALLUSERS=1.
+  * Start Menu shortcut always; desktop shortcut is a feature the user can clear.
+  * The finish page launches the app unless the user clears "Open Bass Coach now".
 
   Windows detection notes (the parts that are easy to get wrong):
   * Do NOT test VersionNT >= 1000 to mean "Windows 10 or 11". Windows Installer's own
@@ -95,19 +100,33 @@
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open Bass Coach now" />
 
-    <ui:WixUI Id="WixUI_Minimal" />
+    <!--
+      WixUI_FeatureTree instead of WixUI_Minimal so the optional desktop shortcut can be a
+      check box, like the "Create a desktop shortcut" task in the old Inno Setup build.
+      The shortcut lives in its own feature, which is selected by default and may be cleared.
+    -->
+    <ui:WixUI Id="WixUI_FeatureTree" />
     <WixVariable Id="WixUILicenseRtf" Value="$(sys.SOURCEFILEDIR)License.rtf" />
 
+    <!--
+      "Open Bass Coach now" is a check box on the finish page. The check box lives in the UI
+      sequence, so the app must be launched from the Finish button (DoAction), not from a
+      custom action after InstallFinalize: the execute sequence finishes before the finish
+      page is even shown, so an execute-sequence action would ignore the check box.
+      Silent installs (UILevel < 3) never show the page and therefore never launch the app.
+    -->
+    <Property Id="WixShellExecTarget" Value="[#BassCoachExe]" />
     <CustomAction Id="LaunchApplication"
-                  Directory="INSTALLFOLDER"
-                  ExeCommand="&quot;[INSTALLFOLDER]BassCoach.exe&quot;"
-                  Return="asyncNoWait"
-                  Impersonate="yes" />
+                  BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)"
+                  DllEntry="WixShellExec"
+                  Execute="immediate"
+                  Impersonate="yes"
+                  Return="ignore" />
 
-    <InstallExecuteSequence>
-      <Custom Action="LaunchApplication" After="InstallFinalize"
-              Condition="NOT Installed AND UILevel &gt;= 3 AND WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1" />
-    </InstallExecuteSequence>
+    <UI Id="BassCoachUI">
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication" Order="1"
+               Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1" />
+    </UI>
 
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="INSTALLFOLDER" Name="Bass Coach">
@@ -120,14 +139,22 @@
                       WorkingDirectory="INSTALLFOLDER"
                       Icon="BassCoach.exe"
                       Advertise="yes" />
-            <Shortcut Id="DesktopShortcut"
-                      Directory="DesktopFolder"
-                      Name="Bass Coach"
-                      Description="Practice bass with a backing band and instant feedback"
-                      WorkingDirectory="INSTALLFOLDER"
-                      Icon="BassCoach.exe"
-                      Advertise="yes" />
           </File>
+        </Component>
+        <Component Id="DesktopShortcutComponent" Guid="9C4E6A12-7B3D-4F58-A1C2-8D5E0B7F3A64" Directory="DesktopFolder">
+          <!-- The registry value is the component keypath, so the shortcut can be optional. -->
+          <RegistryValue Root="HKCU"
+                         Key="Software\BassCoach"
+                         Name="DesktopShortcut"
+                         Type="integer"
+                         Value="1"
+                         KeyPath="yes" />
+          <Shortcut Id="DesktopShortcut"
+                    Name="Bass Coach"
+                    Target="[INSTALLFOLDER]BassCoach.exe"
+                    Description="Practice bass with a backing band and instant feedback"
+                    WorkingDirectory="INSTALLFOLDER"
+                    Icon="BassCoach.exe" />
         </Component>
       </Directory>
     </StandardDirectory>
@@ -145,6 +172,17 @@
              AllowAbsent="no">
       <ComponentRef Id="MainExecutable" />
       <ComponentGroupRef Id="AppFiles" />
+      <!--
+        Optional desktop shortcut. Level 1 + AllowAbsent means it is installed by default but
+        the user can clear it in the feature tree, exactly like the old Inno Setup task.
+      -->
+      <Feature Id="DesktopShortcutFeature"
+               Title="Desktop shortcut"
+               Description="Add a Bass Coach shortcut to the desktop."
+               Level="1"
+               AllowAbsent="yes">
+        <ComponentRef Id="DesktopShortcutComponent" />
+      </Feature>
     </Feature>
   </Package>
 </Wix>

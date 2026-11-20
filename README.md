@@ -18,7 +18,7 @@ It is a practice tool, not a replacement for a human teacher: it can judge notes
 
 **Requirements:** Windows 10/11 (64-bit). A bass plugged into an audio interface (input 1) works best; a microphone in front of an amp also works, with less accuracy. Use headphones so the backing band does not leak into the input.
 
-**Install:** run `Install-BassCoach-x.y.z-x64.msi` and click Next, Install, Finish. It installs for the current user under `%LOCALAPPDATA%\Programs\Bass Coach` and needs no administrator rights. A Start Menu shortcut is always created; the desktop shortcut is optional. You can also launch the app from the last page of the installer.
+**Install:** run `Install-BassCoach-x.y.z-x64.msi`, accept the license and click Install. It installs for the current user under `%LOCALAPPDATA%\Programs\Bass Coach` and needs no administrator rights. A Start Menu shortcut is always created; the desktop shortcut is selected by default and can be cleared on the **Custom Setup** page. The last page has an **Open Bass Coach now** checkbox.
 
 **First run**
 1. Open **Settings**, choose your input and output, pick 4 or 5 strings, and press **Test my input**. Play a note: you should see its name and the level meter move. Adjust *sensitivity* until only your playing registers. Save.
