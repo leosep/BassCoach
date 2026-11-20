@@ -18,7 +18,7 @@ It is a practice tool, not a replacement for a human teacher: it can judge notes
 
 **Requirements:** Windows 10/11 (64-bit). A bass plugged into an audio interface (input 1) works best; a microphone in front of an amp also works, with less accuracy. Use headphones so the backing band does not leak into the input.
 
-**Install:** run `Install-BassCoach-x.y.z-x64.msi`, accept the license and click Install. It installs for the current user under `%LOCALAPPDATA%\Programs\Bass Coach` and needs no administrator rights. A Start Menu shortcut is always created; the desktop shortcut is selected by default and can be cleared on the **Custom Setup** page. The last page has an **Open Bass Coach now** checkbox.
+**Install:** download `Install-BassCoach-x.y.z-x64.msi` from the [`releases`](releases/) folder in this repository (or from the [Releases page](https://github.com/leosep/BassCoach/releases)), run it, accept the license and click Install. It installs for the current user under `%LOCALAPPDATA%\Programs\Bass Coach` and needs no administrator rights. A Start Menu shortcut is always created; the desktop shortcut is selected by default and can be cleared on the **Custom Setup** page. The last page has an **Open Bass Coach now** checkbox.
 
 **First run**
 1. Open **Settings**, choose your input and output, pick 4 or 5 strings, and press **Test my input**. Play a note: you should see its name and the level meter move. Adjust *sensitivity* until only your playing registers. Save.
@@ -47,6 +47,7 @@ src/BassCoach.Desktop       WPF views (XAML), NAudio/WASAPI bridge, fretboard co
 tests/BassCoach.SelfTest    dependency-free test runner (31 tests, uses synthetic bass audio)
 installer/BassCoach.wxs     WiX MSI installer (per-user, x64, Start Menu + optional desktop shortcut)
 installer/License.rtf       EULA shown by the installer
+releases/                   built MSI installers, one folder entry per version (committed by hand)
 ```
 
 Run the tests (any OS with the .NET 8 SDK): `dotnet run --project tests/BassCoach.SelfTest -c Release`

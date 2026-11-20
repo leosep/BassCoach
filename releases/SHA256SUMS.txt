@@ -1,0 +1,1 @@
+775686007aa5daf1d22ed25a0832a3852a77be43f83fe269bb1f5e6bc734a8c8  Install-BassCoach-1.0.2-x64.msi
