@@ -52,7 +52,7 @@ installer/BassCoach.iss     legacy Inno Setup script, kept for reference only
 
 Run the tests (any OS with the .NET 8 SDK): `dotnet run --project tests/BassCoach.SelfTest -c Release`
 
-Build the installer on Windows: double-click `build-installer.bat` (needs the .NET 8 SDK and the WiX Toolset v7 CLI), or push to GitHub: the workflow in `.github/workflows/build.yml` runs the tests, publishes a self-contained build, builds and validates the MSI, and produces `dist\Install-BassCoach-x.y.z-x64.msi`. Tag a commit `v1.0.0` to attach it to a release.
+Build the installer on Windows: double-click `build-installer.bat` (needs the .NET 8 SDK and the WiX Toolset v7 CLI), or push to GitHub: the workflow in `.github/workflows/build.yml` runs the tests, publishes a self-contained build, builds and validates the MSI, and produces `dist\Install-BassCoach-x.y.z-x64.msi`. Tag a commit `vX.Y.Z` to attach it to a release.
 
 WiX is required as a .NET global tool:
 
@@ -70,6 +70,6 @@ Design notes: the only code that touches hardware is `src/BassCoach.Desktop/Audi
 ### Status (read before shipping)
 - **Verified by the automated tests:** theory, chord/scale logic, pitch detection on synthetic bass notes from 31 to 392 Hz at 44.1 and 48 kHz, note and onset tracking, backing-band timing, evaluation and scoring, lessons and unlocking, settings and progress storage, and every view-model flow (start, play, finish, save, unlock, errors, navigation).
 - **Built and tested on Windows:** `dotnet build BassCoach.sln -c Release` succeeds with no warnings or errors, all 31 self-tests pass, and the self-contained win-x64 publish builds. The WPF layer compiles; XAML and bindings are only checked by the compiler, so a visual pass on real hardware is still worthwhile.
-- **Installer verified:** the WiX MSI builds, `wix msi validate` reports no errors or warnings, and a silent install/uninstall was tested on Windows 10 22H2 (251 files, Start Menu and desktop shortcuts, Add/Remove Programs entry, clean removal). The installer requires Windows 10/11 and x64; the OS check uses the registry because MSI reports `VersionNT = 603` on Windows 10/11.
+- **Installer verified:** the WiX MSI builds, `wix msi validate` reports no errors or warnings, and install/uninstall was tested on Windows 10 22H2 (254 files, Start Menu shortcut, optional desktop shortcut, Add/Remove Programs entry, clean removal). The wizard was driven end to end to check the desktop-shortcut feature and the "Open Bass Coach now" box. The installer requires Windows 10/11 and x64; the OS check uses the registry because MSI reports `VersionNT = 603` on Windows 10/11.
 - **Needs a real bass:** real-world latency and calibration, microphone input, onset detection with real plucked/slapped notes and ringing strings, and the feel of the lesson difficulty.
 - **Not included:** code signing (Windows SmartScreen will warn on first run), automatic updates, macOS/Linux support.
