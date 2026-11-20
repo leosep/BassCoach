@@ -47,7 +47,6 @@ src/BassCoach.Desktop       WPF views (XAML), NAudio/WASAPI bridge, fretboard co
 tests/BassCoach.SelfTest    dependency-free test runner (31 tests, uses synthetic bass audio)
 installer/BassCoach.wxs     WiX MSI installer (per-user, x64, Start Menu + optional desktop shortcut)
 installer/License.rtf       EULA shown by the installer
-installer/BassCoach.iss     legacy Inno Setup script, kept for reference only
 ```
 
 Run the tests (any OS with the .NET 8 SDK): `dotnet run --project tests/BassCoach.SelfTest -c Release`

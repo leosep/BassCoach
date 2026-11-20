@@ -52,8 +52,8 @@
                         Manufacturer="Bass Coach" />
 
     <!--
-      Dual-purpose package: per-user by default (no administrator rights, same behaviour as
-      the old Inno Setup build), but a per-machine install is still possible with ALLUSERS=1.
+      Dual-purpose package: per-user by default (no administrator rights), but a per-machine
+      install is still possible with ALLUSERS=1.
       ProgramFiles6432Folder redirects to %LocalAppData%\Programs for the per-user case.
     -->
     <MajorUpgrade DowngradeErrorMessage="A newer version of Bass Coach is already installed."
@@ -101,9 +101,9 @@
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open Bass Coach now" />
 
     <!--
-      WixUI_FeatureTree instead of WixUI_Minimal so the optional desktop shortcut can be a
-      check box, like the "Create a desktop shortcut" task in the old Inno Setup build.
-      The shortcut lives in its own feature, which is selected by default and may be cleared.
+      WixUI_FeatureTree instead of WixUI_Minimal so the desktop shortcut can be a check box
+      on the Custom Setup page. The shortcut lives in its own feature, which is selected by
+      default and may be cleared.
     -->
     <ui:WixUI Id="WixUI_FeatureTree" />
     <WixVariable Id="WixUILicenseRtf" Value="$(sys.SOURCEFILEDIR)License.rtf" />
@@ -174,7 +174,7 @@
       <ComponentGroupRef Id="AppFiles" />
       <!--
         Optional desktop shortcut. Level 1 + AllowAbsent means it is installed by default but
-        the user can clear it in the feature tree, exactly like the old Inno Setup task.
+        the user can clear it on the Custom Setup page.
       -->
       <Feature Id="DesktopShortcutFeature"
                Title="Desktop shortcut"
